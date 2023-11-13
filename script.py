@@ -8,16 +8,6 @@ from mimesis import Generic
 import random
 import pyautogui
 
-# ejecutar estos comandos en el cmd para asegurarnos q funcione correctamente
-# pip install selenium
-# pip install webdriver
-# pip install pyperclip
-# pip install mimesis
-# pip install pyautogui
-# pip install --upgrade webdriver_manager
-# pip install webdriver_manager==3.5.2
-# deberian ser todas las dependencias
-
 gen = Generic()
 
 driver = webdriver.Chrome()
