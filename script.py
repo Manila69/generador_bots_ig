@@ -7,48 +7,46 @@ import pyperclip
 from mimesis import Generic
 import random
 import pyautogui
+from selenium.webdriver.support.ui import WebDriverWait
+from selenium.webdriver.support import expected_conditions as EC
+from selenium.common.exceptions import NoSuchElementException
 
+# Configuración inicial
 gen = Generic()
-
 driver = webdriver.Chrome()
 driver.maximize_window()
-# Abre el sitio web
 driver.get("https://maildrop.cc/")
-
-# Espera hasta que la página esté completamente cargada
 time.sleep(5)
 
-# Encuentra y hace clic en el botón "Generar nuevo correo electrónico"
+# Genera un nuevo correo electrónico
 boton_mail = driver.find_element(By.XPATH, '//*[@id="gatsby-focus-wrapper"]/div/section[1]/div/div[2]/div[2]/div/div[2]/div[1]/div[1]/div[1]')
 boton_mail.click()
-
-# Espera para asegurarse de que el nuevo correo electrónico se haya generado
 time.sleep(2)
 
 # Copia la nueva dirección de correo electrónico generada al portapapeles
 mail = pyperclip.paste()
 print(mail)
-# Encuentra y hace clic en el enlace "Ir al buzón"
+
+# Accede al buzón del nuevo correo
 al_buzon = driver.find_element(By.XPATH, '//*[@id="gatsby-focus-wrapper"]/div/section[1]/div/div[2]/div[2]/div/div[2]/div[2]/button')
 al_buzon.click()
 
+# Obtiene el nombre de usuario generado
 userName_input = driver.find_element(By.XPATH, '//*[@id="navbar"]/div/div[3]/form/div/input')
 userN = userName_input.get_attribute('value')
-# Espera para asegurarse de que la nueva pestaña se haya abierto
 time.sleep(2)
 
+# Abre una nueva pestaña
 driver.execute_script("window.open('', '_blank');")
 time.sleep(2)
-# Cambia al controlador de la nueva pestaña
 driver.switch_to.window(driver.window_handles[1])
 time.sleep(2)
-# Abre la segunda página en la nueva pestaña
-driver.get("https://www.instagram.com/accounts/emailsignup/")
 
-# Espera para asegurarse de que la página de registro de Instagram se haya cargado
+# Accede a la página de registro de Instagram
+driver.get("https://www.instagram.com/accounts/emailsignup/")
 time.sleep(5)
 
-# Encuentra el campo de correo electrónico y lo completa con la dirección generada
+# Completa el formulario de registro
 mailOcel = driver.find_element(By.NAME, 'emailOrPhone')
 mailOcel.send_keys(mail)
 
@@ -61,7 +59,6 @@ time.sleep(3)
 
 username = driver.find_element(By.NAME, 'username')
 username.click()
-
 time.sleep(2)
 username.send_keys(userN)
 time.sleep(2)
@@ -71,49 +68,46 @@ password = gen.person.password(length=9)
 time.sleep(1)
 passw.send_keys(password)
 
-time.sleep(4)
-
-# Ya rellene todo el formulario..
-# Posición actual del mouse: Point(x=504, y=712)
-pyautogui.moveTo(504, 712, duration=1)
-send = driver.find_element(By.XPATH, '//button[@class="_acan _acap _acas _aj1- _ap30" and @type="submit"]')
-time.sleep(4)
+# Clic en el botón de registro
+pyautogui.moveTo(504, 712, duration=1)  # Ajustar según la ubicación del botón en tu pantalla
+time.sleep(3)
 pyautogui.click()
-time.sleep(1)
-send.click()
 
-# cumpleanios
+# Selecciona la fecha de nacimiento
 time.sleep(3)
 select_element = driver.find_element(By.XPATH, '//select[@title="Año:"]')
 select_element.click()
-
 time.sleep(2)
-
 selec = driver.find_element(By.XPATH, '//option[@title="2003"]')
 selec.click()
-
 time.sleep(1)
-
 select_element.click()
-
 time.sleep(1)
-
-enter = driver.find_element(By.XPATH, '//button[@type="button"]')
-enter.click()
-
+pyautogui.moveTo(504, 494, duration=1)  # Ajustar según la ubicación del botón en tu pantalla
 time.sleep(3)
-
-cross = driver.find_element(By.CSS_SELECTOR, 'button._abl-')
-time.sleep(1)
-cross.click()
-
-time.sleep(5)
-#Posición actual del mouse: Point(x=504, y=494)
-pyautogui.moveTo(504, 494, duration=1)
-
-# Hacer clic en la ubicación actual del mouse
 pyautogui.click()
 
-time.sleep(2)
-#enter = driver.find_element(By.XPATH, '//button[@type="button"]')
-#enter.click()
+# Espera para la verificación del correo
+time.sleep(15)
+driver.switch_to.window(driver.window_handles[0])
+time.sleep(60)
+
+# Actualiza el buzón de correo y obtiene el código de verificación
+actualizar = driver.find_element(By.XPATH, '//*[@id="gatsby-focus-wrapper"]/div/main/div/div[1]/div/div/div[1]/div[2]/button')
+actualizar.click()
+time.sleep(5)
+elemento_td = driver.find_element(By.XPATH, '//*[@id="email_content"]/table/tbody/tr[4]/td/table/tbody/tr/td/table/tbody/tr[2]/td[2]/table/tbody/tr[2]/td[2]')
+numero = elemento_td.text
+time.sleep(5)
+
+# Cambia a la pestaña de Instagram y completa el código de verificación
+driver.switch_to.window(driver.window_handles[1])
+time.sleep(5)
+input_code = driver.find_element(By.XPATH, '//*[@id="mount_0_0_/k"]/div/div/div[2]/div/div/div/div[1]/section/main/div/div/div[1]/div[2]/form/div/div[1]/input')
+input_code.click()
+time.sleep(1)
+input_code.send_keys(numero)
+time.sleep(1)
+pyautogui.moveTo(953, 590, duration=1)  # Ajustar según la ubicación del botón en tu pantalla
+time.sleep(3)
+pyautogui.click()
